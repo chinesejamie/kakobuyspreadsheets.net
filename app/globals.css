@@ -32,7 +32,7 @@
       transform: scale(1) rotate(0);
     }
   };
-  
+
   /* Page Transition Animation */
   --animation-page-fade-in: pageFadeIn 0.4s ease-out forwards;
   --keyframes-pageFadeIn: {
@@ -50,20 +50,17 @@
   --font-sans: "Geist", "Helvetica", sans-serif;
 }
 
+/* ✅ Light Mode enforced */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ❌ Remove or comment this section to disable automatic dark mode */
+
 
 body {
-  background: var(--background);
+  background:#ffffff;
   color: var(--foreground);
   font-family: var(--font-sans);
 }

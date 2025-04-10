@@ -12,9 +12,11 @@ interface ProductCardProps {
     findsOfTheWeekUntil?: Date | null;
     viewCount?: number | 0;
     purchased?: number;
+    totalBoostForPage?: number; // <-- hinzufügen
   };
   currency: string;
 }
+
 
 // Currency symbols mapping
 const currencySymbols: Record<string, string> = {
@@ -74,14 +76,17 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm text-gray-700 font-medium">
-            <Link href={`/product/${product._id}`}>
+          <Link href={`/kakobuy-spreadsheet/products/${encodeURIComponent(product.creatorName)}/${encodeURIComponent(product.name)}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
             </Link>
           </h3>
           <p className="mt-1 text-sm text-gray-500">
             {product.creatorName}
-            {product.viewCount && ` • ${product.viewCount}`} Views
+            {product.viewCount !== undefined && ` • ${product.viewCount} views`}
+            {product.totalBoostForPage !== undefined && product.totalBoostForPage > 0 && (
+              <> • {product.totalBoostForPage} boost</>
+            )}
           </p>
         </div>
         <p className="text-sm font-medium text-gray-900">{formatPrice()}</p>

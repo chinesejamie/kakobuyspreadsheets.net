@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   const pageParam = url.searchParams.get('page') || '1';
   const limitParam = url.searchParams.get('limit') || '100';
   const category = url.searchParams.get('category');
+  const pageId = "6799584fbc65b3b31ece3bc6"
   
   const page = Number(pageParam);
   const limit = Number(limitParam);
@@ -74,16 +75,56 @@ export async function GET(request: NextRequest) {
     
     console.log(`filteredCount based on query: ${filteredCount}`);
 
-    // Aggregation pipeline - simplified based on your model
+    // Define the current date to compare with validUntil
+    const now = new Date();
+
+    // Aggregation pipeline with boost calculation
+    // Build the $sort stage dynamically
+    const sortStage: { [key: string]: number } = {
+      findsOfTheWeekUntil: -1,
+      viewCount: -1,
+      purchased: -1,
+      _id: -1,
+    };
+
+    // Only include totalBoostForPage sorting if pageId is provided
+    if (pageId) {
+      sortStage.totalBoostForPage = -1;
+    }
+
     const aggregationPipeline = [
       { $match: mongoQuery },
       {
+        $addFields: {
+          totalBoostForPage: {
+            $sum: {
+              $map: {
+                input: {
+                  $filter: {
+                    input: "$boosts",
+                    as: "boost",
+                    cond: { 
+                      $and: [
+                        { $eq: ["$$boost.boostPage", pageId] },
+                        { $gt: ["$$boost.validUntil", now] }
+                      ]
+                    }
+                  }
+                },
+                as: "validBoost",
+                in: "$$validBoost.amount"
+              }
+            }
+          }
+        }
+      },
+      {
         $sort: {
-          // Check for findsOfTheWeekUntil first
+          totalBoostForPage: -1, // ← Boosted products always on top
           findsOfTheWeekUntil: -1,
-          viewCount: -1,     // Then by view count
-          purchased: -1,     // Then by purchase count
-          _id: -1            // Finally by creation date (newest first)
+          viewCount: -1,
+          purchased: -1,
+          _id: -1
         }
       },
       { $skip: (page - 1) * limit },
@@ -95,16 +136,22 @@ export async function GET(request: NextRequest) {
           price: 1,
           creatorName: 1,
           store: 1,
-          mainImage: { $arrayElemAt: ["$images", 0] }, // Adjust based on your image structure
+          mainImage: { $arrayElemAt: ["$images", 0] },
           images: 1,
           viewCount: 1,
           purchased: 1,
-          findsOfTheWeekUntil: 1
+          findsOfTheWeekUntil: 1,
+          totalBoostForPage: 1,
+          boosts: 1
         }
       }
     ];
+    
 
     console.log(`Aggregation skip: ${(page - 1) * limit}, limit: ${limit}`);
+    if (pageId) {
+      console.log(`Boosting products for pageId: ${pageId}`);
+    }
 
     // Get paginated results
     const products = await Product.aggregate(aggregationPipeline);
