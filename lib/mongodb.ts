@@ -1,11 +1,16 @@
+// lib/mongodb.ts
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:124zh412DWZg7!341h1@212.227.74.41:27017';
+const MONGODB_URI = process.env.MONGODB_URI!;
 
-let cached = global.mongoose;
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI is not defined');
+}
+
+let cached = (global as any).mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = (global as any).mongoose = { conn: null, promise: null };
 }
 
 async function connectToDatabase() {
@@ -14,13 +19,9 @@ async function connectToDatabase() {
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false, // wichtig für Server Rendering
+    }).then((mongoose) => mongoose);
   }
   
   cached.conn = await cached.promise;

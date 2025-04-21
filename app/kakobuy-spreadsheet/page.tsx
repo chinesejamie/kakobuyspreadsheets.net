@@ -1,67 +1,165 @@
+// app/kakobuy-spreadsheet/page.tsx
+
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
 import ProductPageHeroProducts from '@/components/ProductPageHeroProducts';
+import type { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = 'KakoBuy Spreadsheet | Find the Best Deals';
+  const description = 'Discover thousands of Chinese products with verified pricing, boosted offers, and detailed listings. Updated daily on KakoBuy Spreadsheet.';
+  const imageUrl = 'https://kakobuy-spreadsheet.com/images/seo-cover.webp'; // Passe diesen Pfad an, wenn du ein OG-Bild hast!
+
+  return {
+    title,
+    description,
+    metadataBase: new URL('https://kakobuy-spreadsheet.com'),
+    keywords: [
+      'kakobuy spreadsheet',
+      'kakobuy price list',
+      'find Chinese products',
+      'product verification',
+      'boosted products',
+      'CNY to USD converter',
+      'kakobuy affiliate deals',
+    ],
+    openGraph: {
+      title,
+      description,
+      url: '/kakobuy-spreadsheet',
+      siteName: 'KakoBuy Spreadsheet',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: 'KakoBuy Spreadsheet',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: '/kakobuy-spreadsheet',
+    },
+  };
+}
+
 
 export const dynamic = 'force-dynamic';
+
+interface ApiProduct {
+  _id: string;
+  name: string;
+  description: string;
+  price: number | string;
+  creatorName: string;
+  mainImage: string | { url: string };
+  images: any[];
+  viewCount: number;
+  boostAmount?: number;
+  purchased?: number;
+  findsOfTheWeekUntil?: Date;
+}
 
 interface Product {
   _id: string;
   name: string;
   description: string;
-  price: string | number;
+  price: number | string;
   creatorName: string;
   mainImage: string;
   images: any[];
   viewCount: number;
   boostAmount: number;
+  purchased: number;
+  findsOfTheWeekUntil: Date | null;
 }
 
 export default async function KakoBuySpreadsheetPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const page = parseInt(
-    Array.isArray(searchParams.page) ? searchParams.page[0] : searchParams.page || '1',
-    10
-  );
-  const search = Array.isArray(searchParams.search)
-    ? searchParams.search[0]
-    : searchParams.search || '';
-  const category = Array.isArray(searchParams.category)
-    ? searchParams.category[0]
-    : searchParams.category || 'All';
+  const params = await searchParams;
+
+  // 1) Query‑Params parsen
+  const pParam = Array.isArray(params.page) ? params.page[0] : params.page;
+  const page = parseInt(pParam ?? '1', 10);
+  const search = Array.isArray(params.search)
+    ? params.search[0]
+    : params.search ?? '';
+  const category = Array.isArray(params.category)
+    ? params.category[0]
+    : params.category ?? 'All';
   const limit = 100;
 
-  const queryParams = new URLSearchParams({
+  const qp = new URLSearchParams({
     search,
     category,
     page: String(page),
     limit: String(limit),
   });
 
+  // 2) Daten laden
   let allProducts: Product[] = [];
   let totalProducts = 0;
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?${queryParams}`,
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/api/products?${qp.toString()}`,
       { cache: 'no-store' }
     );
 
-    // 404 = keine Produkte gefunden → kein Fehler!
+    
     if (res.status === 404) {
       allProducts = [];
       totalProducts = 0;
     } else if (!res.ok) {
-      throw new Error(`Failed to fetch products, status = ${res.status}`);
+      throw new Error(`Failed to fetch products (status ${res.status})`);
     } else {
       const data = await res.json();
-      allProducts = data.products || [];
       totalProducts = data.totalProducts || 0;
+
+      // 3) mainImage und Badge‑Felder normalisieren
+      const apiProducts: ApiProduct[] = data.products || [];
+      allProducts = apiProducts.map((p) => {
+        // mainImage auf String bringen
+        let mainImage: string;
+        if (typeof p.mainImage === 'string') {
+          mainImage = p.mainImage;
+        } else if (
+          p.mainImage &&
+          typeof (p.mainImage as any).url === 'string'
+        ) {
+          mainImage = (p.mainImage as any).url;
+        } else {
+          mainImage = '/images/default-product.jpg';
+        }
+
+        return {
+          _id: p._id,
+          name: p.name,
+          description: p.description,
+          price: p.price,
+          creatorName: p.creatorName,
+          mainImage,
+          images: p.images,
+          viewCount: p.viewCount,
+          boostAmount: p.boostAmount ?? 0,
+          purchased: p.purchased ?? 0,
+          findsOfTheWeekUntil: p.findsOfTheWeekUntil ?? null,
+        };
+      });
     }
-  } catch (error) {
-    console.error('Error loading products:', error);
+  } catch (err) {
+    console.error('Error loading products:', err);
     return (
       <div className="text-center mt-10 text-red-600">
         Failed to load products. Please try again later.
@@ -69,53 +167,59 @@ export default async function KakoBuySpreadsheetPage({
     );
   }
 
+  // 4) Pagination‑Berechnung
   const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
-
-  function getPageUrl(pageNumber: number) {
-    const qp = new URLSearchParams({
-      page: String(pageNumber),
+  const getPageUrl = (num: number) => {
+    const params = new URLSearchParams({
+      page: String(num),
       ...(category !== 'All' ? { category } : {}),
       ...(search ? { search } : {}),
     });
-    return `/kakobuy-spreadsheet?${qp.toString()}`;
-  }
-
-  function displayedPages() {
-    if (totalPages <= 5) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    return `/kakobuy-spreadsheet?${params.toString()}`;
+  };
+  const displayedPages = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
     const start = Math.max(1, page - 2);
     const end = Math.min(totalPages, page + 2);
-    return Array.from({ length: end - start + 1 }, (_, i) => i + start);
-  }
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
 
   return (
     <>
       <ProductPageHeroProducts />
 
-      <div className="h-full px-4 md:px-0 my-4">
-        <div className="mx-auto max-w-2xl lg:max-w-7xl animate-page-fade-in">
-          {/* Product Count */}
-          {allProducts.length > 0 && (
-            <div className="text-center mb-6">
-              <p className="text-lg font-medium text-gray-900">
-                Total Products: {totalProducts}
-              </p>
-            </div>
-          )}
+      <div className="h-full my-4">
+      <div className="grid max-w-screen-xl px-4 mx-auto w-full animate-page-fade-in">
+    {allProducts.length > 0 && (
+      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {allProducts.map((product) => (
+          <ProductCard key={product._id} product={product} />
+        ))}
+      </div>
+    )}
 
-          {/* No Products */}
+
+          {/* Kein Produkt gefunden */}
           {allProducts.length === 0 && (
             <div className="text-center">
-              <p className="text-lg font-medium text-gray-900">No products existing</p>
+              <p className="text-lg font-medium text-gray-900">
+                No products existing
+              </p>
               <p className="text-sm text-gray-500 mt-2">
                 Searching for a product but it's not here?{' '}
-                <Link href="/features/request-product" className="text-primary-500 hover:underline">
+                <Link
+                  href="/features/request-product"
+                  className="text-primary-500 hover:underline"
+                >
                   Request a Product
                 </Link>
               </p>
             </div>
           )}
 
-          {/* Product Grid */}
+          {/* Product‑Grid */}
           {allProducts.length > 0 && (
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {allProducts.map((product) => (
@@ -140,7 +244,9 @@ export default async function KakoBuySpreadsheetPage({
                   key={p}
                   href={getPageUrl(p)}
                   className={`px-3 py-1 text-sm rounded-full ${
-                    p === page ? 'bg-primary-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                    p === page
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300'
                   }`}
                 >
                   {p}

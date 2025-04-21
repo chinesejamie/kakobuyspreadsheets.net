@@ -15,7 +15,7 @@ const navigation = [
   { name: 'Articles', href: '/articles' },
   { name: 'Finds of the Week', href: '/features/finds-of-the-week' },
   { name: 'QC-Images', href: '/features/kakobuy-qc-images' },
-  { name: 'Dead Link', href: '/feature-soon' },
+  { name: 'Dead Link', href: '/features/dead-link' },
 ];
 
 export default function Header() {

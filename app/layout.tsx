@@ -1,9 +1,10 @@
-// File: /app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { generateMainMetadata } from './metadata';
-import Header from '../components/Header';
+import Header from '@/components/Header';
+import TopBanner from '@/components/TopBanner';
+import PromoPopup from '@/components/PromoPopup';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,6 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <PromoPopup />
+        <TopBanner />
         <Header />
         {children}
       </body>

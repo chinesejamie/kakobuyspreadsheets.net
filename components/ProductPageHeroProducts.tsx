@@ -4,7 +4,7 @@ import Link from 'next/link';
 import ProductPageSearchBar from '@/components/ProductPageSearchBar';
 
 const agentName = process.env.NEXT_PUBLIC_AGENT_NAME || 'KakoBuy';
-const inviteURL = process.env.NEXT_PUBLIC_INVITE_URL || 'https://discord.gg/GGZPQeSjxv';
+const inviteURL = process.env.NEXT_PUBLIC_INVITE_URL || 'https://ikako.vip/r/kakobuyspreadsheet';
 
 export default function ProductPageHeroProducts() {
   return (

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 // Define the Product interface based on your schema
 export interface IProduct extends Document {
@@ -54,6 +54,8 @@ const ProductSchema = new Schema(
 );
 
 // Initialize the model with explicit collection name
-export const Product = 
-  mongoose.models.Product || 
-  mongoose.model<IProduct>('Product', ProductSchema, 'productList');
+const Product: Model<IProduct> = mongoose.models.Product
+  ? (mongoose.models.Product as Model<IProduct>)
+  : mongoose.model<IProduct>('Product', ProductSchema, 'productList');
+
+export default Product;

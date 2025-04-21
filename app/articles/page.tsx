@@ -22,13 +22,32 @@ export const metadata: Metadata = {
     title: 'KakoBuy Spreadsheet Articles & Guides 2024',
     description:
       'Explore in-depth articles around the KakoBuy Spreadsheet, including coupon hacks, agent comparisons, trust scores, and shopping tips for Chinese marketplaces.',
-    url: 'https://yourdomain.com/kakobuy-spreadsheet/articles',
+    url: 'https://kakobuy-spreadsheet.com/kakobuy-spreadsheet/articles',
     type: 'article',
   },
   alternates: {
     canonical: '/articles',
   },
 };
+
+  // {
+  //   slug: 'kakobuy-vs-wegobuy',
+  //   title: 'KakoBuy vs Wegobuy: Which Agent Wins in 2024?',
+  //   description:
+  //     'This head-to-head comparison looks at pricing, shipping, agent services and overall spreadsheet integration.',
+  // },
+  // {
+  //   slug: 'how-to-use-kakobuy-spreadsheet',
+  //   title: 'How to Use the KakoBuy Spreadsheet Like a Pro',
+  //   description:
+  //     'Learn how to navigate, filter, and sort the spreadsheet to find the best deals, rare items, and trending finds.',
+  // },
+  // {
+  //   slug: 'kakobuy-agent-review',
+  //   title: 'KakoBuy Agent Review 2024: Service, Communication & QC Ratings',
+  //   description:
+  //     'We evaluate the KakoBuy team, their service quality, and how they compare to other Chinese agent experiences.',
+  // },
 
 const articles = [
   {
@@ -42,24 +61,6 @@ const articles = [
     title: 'Is KakoBuy Legit? A Deep Dive into Safety & Trust in 2024',
     description:
       'We break down the pros, cons, user experiences, and transparency of KakoBuy compared to other shopping agents in 2024.',
-  },
-  {
-    slug: 'kakobuy-vs-wegobuy',
-    title: 'KakoBuy vs Wegobuy: Which Agent Wins in 2024?',
-    description:
-      'This head-to-head comparison looks at pricing, shipping, agent services and overall spreadsheet integration.',
-  },
-  {
-    slug: 'how-to-use-kakobuy-spreadsheet',
-    title: 'How to Use the KakoBuy Spreadsheet Like a Pro',
-    description:
-      'Learn how to navigate, filter, and sort the spreadsheet to find the best deals, rare items, and trending finds.',
-  },
-  {
-    slug: 'kakobuy-agent-review',
-    title: 'KakoBuy Agent Review 2024: Service, Communication & QC Ratings',
-    description:
-      'We evaluate the KakoBuy team, their service quality, and how they compare to other Chinese agent experiences.',
   },
 ];
 

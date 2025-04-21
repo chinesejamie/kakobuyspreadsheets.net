@@ -1,98 +1,78 @@
-// app/api/product/[creatorName]/[productName]/route.ts
+// app/api/products/[creatorName]/[productName]/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
-import { Product } from '@/models/Product';
 import mongoose from 'mongoose';
 import connectToDatabase from '@/lib/mongodb';
+import Product, { IProduct } from '@/models/Product';
+
+// Hilfsfunktion: CNY → USD
+const convertCnyToUsd = (cny: number): string => (cny * 0.14).toFixed(2);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { creatorName: string; productName: string } }
+  { params }: { params: Promise<{ creatorName: string; productName: string }> }
 ) {
   try {
-    // Connect to database before executing queries
     await connectToDatabase();
-    
-    const { creatorName, productName } = params;
-    
-    console.log(`Fetching product details - Creator: ${creatorName}, Product Name: ${productName}`);
-    
-    // Log connection status
-    const modelName = Product.modelName;
-    const collectionName = Product.collection.name;
-    const dbName = mongoose.connection.db.databaseName;
-    console.log(`Using model: ${modelName}, collection: ${collectionName}, database: ${dbName}`);
-    console.log(`Mongoose connection state: ${mongoose.connection.readyState}`);
-    
-    // Construct query to match by creatorName and either slug, id, or name
-    let query: any = { creatorName };
-    
-    // Add options for finding by slug, id or name
-    query.$or = [
-      { slug: productName },
-      { id: productName },
-      { name: productName }
-    ];
-    
-    console.log('MongoDB query:', JSON.stringify(query));
-    
-    // Find the product
-    const product = await Product.findOne(query).lean();
-    
+
+    const { creatorName: rawCreator, productName: rawProduct } = await params;
+    const creatorName = decodeURIComponent(rawCreator);
+    const productName = decodeURIComponent(rawProduct);
+
+    const query = {
+      creatorName,
+      $or: [
+        { slug: productName },
+        { id:   productName },
+        { name: productName },
+      ],
+    };
+
+    // ─── Hier casten wir auf ein einzelnes Model<IProduct> ─────────────────────
+    const ProductModel = Product as mongoose.Model<IProduct>;
+
+    // nun gibt es nur noch diese eine Signatur:
+    const product = await ProductModel.findOne(
+      query,       // Filter
+      undefined,   // Projektion (alle Felder)
+      { lean: true } // lean = true
+    );
+
     if (!product) {
-      return NextResponse.json(
-        { message: "Product not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     }
-    
-    // Update view count asynchronously (don't wait for it to complete)
-    Product.updateOne(
+
+    // Views inkrementieren (fire-and-forget)
+    ProductModel.updateOne(
       { _id: product._id },
       { $inc: { viewCount: 1 } }
-    ).catch(err => console.error('Error updating view count:', err));
-    
-    // Process the product data
-    const processedProduct = {
+    ).catch(console.error);
+
+    // Aufbereitung
+    const processed = {
       ...product,
-      price: typeof product.price === "number"
-        ? convertCnyToUsd(product.price)
-        : product.price,
-      // Ensure mainImage is the first image or a default
-      mainImage: product.images && product.images.length > 0 
-        ? product.images[0] 
-        : '/images/default-product.jpg'
+      price:     typeof product.price === 'number' ? convertCnyToUsd(product.price) : product.price,
+      mainImage: Array.isArray(product.images) && product.images.length > 0
+        ? product.images[0]
+        : '/images/default-product.jpg',
     };
-    
+
+    const dbName = mongoose.connection.db.databaseName;
     return NextResponse.json({
-      product: processedProduct,
+      product: processed,
       metadata: {
         databaseInfo: {
-          database: dbName,
-          collection: collectionName,
-          model: modelName
-        }
-      }
+          database:   dbName,
+          collection: ProductModel.collection.name,
+          model:      ProductModel.modelName,
+        },
+      },
     });
-    
-  } catch (error) {
-    console.error("Error fetching product details:", error);
-    console.error("Error details:", error instanceof Error ? error.stack : String(error));
-    
+  } catch (err: any) {
+    console.error('Error fetching product details:', err);
     return NextResponse.json(
-      { message: "Failed to fetch product details", error: String(error) },
+      { message: 'Failed to fetch product details', error: err.message || String(err) },
       { status: 500 }
     );
   }
 }
-
-// Simple function to convert CNY to USD (1 CNY = 0.14 USD)
-const convertCnyToUsd = (cnyPrice: number): string => {
-  if (typeof cnyPrice !== 'number' || isNaN(cnyPrice)) {
-    return "0.00";
-  }
-  
-  // Fixed conversion rate from CNY to USD
-  const usdRate = 0.14;
-  
-  return (cnyPrice * usdRate).toFixed(2);
-};

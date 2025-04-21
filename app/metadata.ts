@@ -40,5 +40,8 @@ export function generateMainMetadata(): Metadata {
       index: true,
       follow: true,
     },
+    icons: {
+      icon: '/favicon.ico', // relativer Pfad zur Datei im /public-Ordner
+    },  
   };
 }
