@@ -135,6 +135,7 @@ function CategorySelector({
   );
 }
 
+
 function FindsContent() {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') ?? '1', 10);
@@ -149,7 +150,8 @@ function FindsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const limit = 8;
+  // Changed from 8 to 50
+  const limit = 100;
 
   useEffect(() => {
     async function fetchWeeklyFinds() {
@@ -169,7 +171,6 @@ function FindsContent() {
           { cache: 'no-store' }
         );
         
-
         if (res.status === 404) {
           setWeeklyFinds([]);
           setTotalProducts(0);
@@ -207,7 +208,7 @@ function FindsContent() {
       ...(selectedCategory !== 'All' ? { category: selectedCategory } : {}),
       ...(search ? { search } : {}),
     });
-    return `/finds-of-the-week?${qp}`;
+    return `/features/finds-of-the-week?${qp}`;
   };
   const displayedPages = () => {
     if (totalPages <= 5) return Array.from({ length: totalPages }, (_, i) => i + 1);

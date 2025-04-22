@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 export async function generateMetadata(): Promise<Metadata> {
   const title = 'KakoBuy Spreadsheet | Find the Best Deals';
   const description = 'Discover thousands of Chinese products with verified pricing, boosted offers, and detailed listings. Updated daily on KakoBuy Spreadsheet.';
-  const imageUrl = 'https://kakobuy-spreadsheet.com/images/seo-cover.webp'; // Passe diesen Pfad an, wenn du ein OG-Bild hast!
+  const imageUrl = 'https://kakobuy-spreadsheet.com/images/seo-cover.webp';
 
   return {
     title,
@@ -51,7 +51,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-
 export const dynamic = 'force-dynamic';
 
 interface ApiProduct {
@@ -66,6 +65,7 @@ interface ApiProduct {
   boostAmount?: number;
   purchased?: number;
   findsOfTheWeekUntil?: Date;
+  category?: string;
 }
 
 interface Product {
@@ -80,6 +80,7 @@ interface Product {
   boostAmount: number;
   purchased: number;
   findsOfTheWeekUntil: Date | null;
+  category?: string;
 }
 
 export default async function KakoBuySpreadsheetPage({
@@ -117,7 +118,6 @@ export default async function KakoBuySpreadsheetPage({
       { cache: 'no-store' }
     );
 
-    
     if (res.status === 404) {
       allProducts = [];
       totalProducts = 0;
@@ -155,8 +155,28 @@ export default async function KakoBuySpreadsheetPage({
           boostAmount: p.boostAmount ?? 0,
           purchased: p.purchased ?? 0,
           findsOfTheWeekUntil: p.findsOfTheWeekUntil ?? null,
+          category: p.category,
         };
       });
+
+      // For Shoes category, make sure manyouyisi products are at the top
+      if (category === 'Shoes') {
+        // Split products into manyouyisi and non-manyouyisi
+        const manyouyisiProducts = allProducts.filter(p => 
+          p.creatorName.toLowerCase().includes('manyouyisi')
+        );
+        
+        const otherProducts = allProducts.filter(p => 
+          !p.creatorName.toLowerCase().includes('manyouyisi')
+        );
+        
+        // Sort each group
+        manyouyisiProducts.sort((a, b) => b.purchased - a.purchased || b.viewCount - a.viewCount);
+        otherProducts.sort((a, b) => b.boostAmount - a.boostAmount || b.purchased - a.purchased);
+        
+        // Combine groups with manyouyisi first
+        allProducts = [...manyouyisiProducts, ...otherProducts];
+      }
     }
   } catch (err) {
     console.error('Error loading products:', err);
@@ -191,16 +211,7 @@ export default async function KakoBuySpreadsheetPage({
       <ProductPageHeroProducts />
 
       <div className="h-full my-4">
-      <div className="grid max-w-screen-xl px-4 mx-auto w-full animate-page-fade-in">
-    {allProducts.length > 0 && (
-      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        {allProducts.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
-      </div>
-    )}
-
-
+        <div className="grid max-w-screen-xl px-4 mx-auto w-full animate-page-fade-in">
           {/* Kein Produkt gefunden */}
           {allProducts.length === 0 && (
             <div className="text-center">
@@ -219,7 +230,7 @@ export default async function KakoBuySpreadsheetPage({
             </div>
           )}
 
-          {/* Product‑Grid */}
+          {/* Product‑Grid - Fixed to show only once */}
           {allProducts.length > 0 && (
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {allProducts.map((product) => (

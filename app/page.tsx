@@ -53,7 +53,7 @@ const CONFIG = {
   INVITE_URL: process.env.NEXT_PUBLIC_INVITE_URL || 'https://ikako.vip/r/kakobuyspreadsheet',
 };
 
-const categories = ['Shoes', 'Tracksuits', 'Accessories'];
+const categories = ['Shoes', 'Tracksuits', 'Accessories' , 'Verified Finds'];
 const faqs = [
     {
         id: 1,

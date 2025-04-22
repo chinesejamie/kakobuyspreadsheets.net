@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
   const page     = Number(url.searchParams.get('page')  ?? '1');
   const limit    = Number(url.searchParams.get('limit') ?? '8');
   const now      = new Date();
+  
+  // Fix: Calculate skip correctly
   const skip     = (page - 1) * limit;
 
   // 3) Basis‑Query für aktive Finds
@@ -50,79 +52,108 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // 4) Aggregation‑Pipeline (typisiert als PipelineStage[])
-  const aggregationPipeline: PipelineStage[] = [
-    { $match: mongoQuery },
+  try {
+    // 4) Count total matching documents first
+    const filteredCount = await Product.countDocuments(mongoQuery);
+    const totalFinds = await Product.countDocuments({ findsOfTheWeekUntil: { $ne: null, $gt: now } });
 
-    // Sort: Zahlen-Literale 1 bzw. -1
-    {
-      $sort: {
-        findsOfTheWeekUntil:  1,  // älteste zuerst (1), für umgekehrte Reihenfolge -1
-        viewCount:           -1,
-        purchased:           -1,
-        _id:                 -1
-      }
-    },
+    // 5) Aggregation‑Pipeline (typisiert als PipelineStage[])
+    const aggregationPipeline: PipelineStage[] = [
+      { $match: mongoQuery },
 
-    { $skip: skip },
-    { $limit: limit },
+      // Sort: Zahlen-Literale 1 bzw. -1
+      {
+        $sort: {
+          findsOfTheWeekUntil:  1,  // älteste zuerst (1), für umgekehrte Reihenfolge -1
+          viewCount:           -1,
+          purchased:           -1,
+          _id:                 -1
+        }
+      },
 
-    // Projection und daysRemaining
-    {
-      $project: {
-        name:        1,
-        description: 1,
-        price:       1,
-        link:        1,
-        category:    1,
-        creatorName: 1,
-        store:       1,
-        mainImage:   { $arrayElemAt: ['$images', 0] },
-        images:      1,
-        viewCount:   1,
-        purchased:   1,
-        findsOfTheWeekUntil: 1,
-        daysRemaining: {
-          $ceil: {
-            $divide: [
-              { $subtract: ['$findsOfTheWeekUntil', now] },
-              1000 * 60 * 60 * 24
-            ]
+      // Fix: Apply skip and limit correctly in the pipeline
+      { $skip: skip },
+      { $limit: limit },
+
+      // Projection und daysRemaining
+      {
+        $project: {
+          name:        1,
+          description: 1,
+          price:       1,
+          link:        1,
+          category:    1,
+          creatorName: 1,
+          store:       1,
+          mainImage:   { $arrayElemAt: ['$images', 0] },
+          images:      1,
+          viewCount:   1,
+          purchased:   1,
+          findsOfTheWeekUntil: 1,
+          daysRemaining: {
+            $ceil: {
+              $divide: [
+                { $subtract: ['$findsOfTheWeekUntil', now] },
+                1000 * 60 * 60 * 24
+              ]
+            }
           }
         }
       }
+    ];
+
+    // 6) Execute aggregation pipeline
+    const weeklyFinds = await Product.aggregate(aggregationPipeline);
+
+    // Check if there are no results
+    if (weeklyFinds.length === 0 && page === 1) {
+      return NextResponse.json({ 
+        message: 'No weekly finds available',
+        products: [],
+        totalProducts: 0,
+        totalFindsOfTheWeek: totalFinds,
+        nextRefreshDate: getNextSundayMidnight()
+      }, { status: 404 });
     }
-  ];
 
-  // 5) Ausführen und zählen
-  const weeklyFinds    = await Product.aggregate(aggregationPipeline);
-  const totalFinds     = await Product.countDocuments({ findsOfTheWeekUntil: { $ne: null, $gt: now } });
-  const filteredCount  = (search || (category && category !== 'All'))
-    ? await Product.countDocuments(mongoQuery)
-    : totalFinds;
+    // Handle empty pages beyond the first page
+    if (weeklyFinds.length === 0 && page > 1) {
+      return NextResponse.json({ 
+        message: 'Page not found',
+        products: [],
+        totalProducts: filteredCount,
+        totalFindsOfTheWeek: totalFinds,
+        nextRefreshDate: getNextSundayMidnight(),
+        currentPage: page,
+        totalPages: Math.ceil(filteredCount / limit)
+      }, { status: 200 }); // Return 200 with empty array instead of 404
+    }
 
-  if (weeklyFinds.length === 0) {
-    return NextResponse.json({ message: 'No weekly finds available' }, { status: 404 });
+    // 7) Preis umrechnen und Default‑Bild
+    const converted = weeklyFinds.map(p => ({
+      ...p,
+      price: (typeof p.price === 'number') ? (p.price * 0.14).toFixed(2) : p.price,
+      mainImage: p.mainImage || '/images/default-product.jpg'
+    }));
+
+    // 8) Antwort mit Pagination-Metadaten
+    return NextResponse.json({
+      products: converted,
+      totalProducts: filteredCount,
+      totalFindsOfTheWeek: totalFinds,
+      nextRefreshDate: getNextSundayMidnight(),
+      currentPage: page,
+      totalPages: Math.ceil(filteredCount / limit),
+      hasNextPage: page * limit < filteredCount,
+      hasPrevPage: page > 1
+    });
+  } catch (error) {
+    console.error('Error fetching finds of the week:', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
-
-  // 6) Preis umrechnen und Default‑Bild
-  const converted = weeklyFinds.map(p => ({
-    ...p,
-    price:     (typeof p.price === 'number') ? (p.price * 0.14).toFixed(2) : p.price,
-    mainImage: p.mainImage || '/images/default-product.jpg'
-  }));
-
-  // 7) Antwort
-  return NextResponse.json({
-    products:           converted,
-    totalProducts:      filteredCount,
-    totalFindsOfTheWeek: totalFinds,
-    nextRefreshDate:    getNextSundayMidnight()
-  });
 }
 
 // Hilfsfunktionen
-
 function getNextSundayMidnight(): Date {
   const now = new Date();
   const daysUntil = (7 - now.getDay()) % 7 || 7;

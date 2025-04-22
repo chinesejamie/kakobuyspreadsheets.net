@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   CheckCircle,
   Info,
@@ -31,27 +32,46 @@ export function QCImageFetcher() {
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const fetchImages = async () => {
-    if (!goodsUrl.trim().startsWith('http')) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const urlParam = searchParams.get('url');
+    if (urlParam) {
+      setGoodsUrl(urlParam);
+      fetchImages(urlParam);
+    }
+  }, [searchParams]);
+  
+
+  const fetchImages = async (inputUrl?: string) => {
+    const urlToFetch = inputUrl ?? goodsUrl;
+  
+    if (!urlToFetch || !urlToFetch.trim().startsWith('http')) {
       setStatusMessage('Please enter a valid URL starting with http');
       setStatusType('warning');
       return;
     }
-
+  
+    // URL-Parameter sofort setzen
+    const search = new URLSearchParams();
+    search.set('url', urlToFetch);
+    router.replace(`?${search.toString()}`, { scroll: false });
+  
     setLoading(true);
     setImages([]);
     setStatusMessage('');
     setSearchAttempted(true);
-
+  
     try {
       const response = await fetch('/api/qc-images', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ goodsUrl }),
+        body: JSON.stringify({ goodsUrl: urlToFetch }),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.status === 'success') {
         setImages(data.data || []);
         if (data.data.length === 0) {
@@ -70,16 +90,20 @@ export function QCImageFetcher() {
       setLoading(false);
     }
   };
+  
 
   const handleCopy = async (url: string) => {
     try {
-      await navigator.clipboard.writeText(url);
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('url', goodsUrl);
+      await navigator.clipboard.writeText(currentUrl.toString());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy URL:', error);
     }
   };
+
 
   return (
     <div className="space-y-8">
@@ -126,7 +150,7 @@ export function QCImageFetcher() {
             />
           </div>
           <button
-            onClick={fetchImages}
+            onClick={() => fetchImages()} // <-- Korrekt! NICHT direkt fetchImages
             disabled={loading || !goodsUrl}
             className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 font-medium transition"
           >

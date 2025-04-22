@@ -36,7 +36,9 @@ export default function QCImagesPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-6 sm:p-8">
-        <QCImageFetcher />
+        <React.Suspense fallback={<div>Loading QC Image Tool...</div>}>
+          <QCImageFetcher />
+        </React.Suspense>
         <QCFaq />
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 const categories = [
   'All',
+  'Verified Finds',
   'Shoes',
   'Hoodies',
   'Sweaters',

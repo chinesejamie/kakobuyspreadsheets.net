@@ -22,7 +22,6 @@ export default function BuyNowButton({ creatorName, productId, href }: Props) {
       newWindow.focus();
     }
     
-  
     // 2) Then asynchronously update the server
     fetch('/api/products/purchase', {
       method: 'POST',
