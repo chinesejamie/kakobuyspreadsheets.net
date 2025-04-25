@@ -8,6 +8,11 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import BuyNowButton from '@/components/BuyNowButton';
 
+// Helper function to escape special regex characters
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function generateStaticParams() {
   await connectToDatabase();
   const products = await Product.find({}, { creatorName: 1, id: 1, slug: 1, name: 1 }).lean();
@@ -30,9 +35,14 @@ export async function generateMetadata({
   const productName = decodeURIComponent(encProduct);
 
   await connectToDatabase();
+  // Use case-insensitive regex queries
   const product = await Product.findOne({
-    creatorName,
-    $or: [{ slug: productName }, { id: productName }, { name: productName }],
+    creatorName: { $regex: new RegExp(`^${escapeRegExp(creatorName)}$`, 'i') },
+    $or: [
+      { slug: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+      { id: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+      { name: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+    ],
   }).lean();
 
   if (!product) return {};
@@ -95,10 +105,14 @@ export default async function ProductPage({
 
   await connectToDatabase();
 
-  // === hier: Cast via unknown ===
+  // Update the query to be case-insensitive
   const product = (await Product.findOne({
-    creatorName,
-    $or: [{ slug: productName }, { id: productName }, { name: productName }],
+    creatorName: { $regex: new RegExp(`^${escapeRegExp(creatorName)}$`, 'i') },
+    $or: [
+      { slug: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+      { id: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+      { name: { $regex: new RegExp(`^${escapeRegExp(productName)}$`, 'i') } },
+    ],
   })
     .lean()) as unknown as IProduct & { _id: Types.ObjectId } | null;
 

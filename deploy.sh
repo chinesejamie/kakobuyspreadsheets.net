@@ -5,7 +5,7 @@ SSH_KEY="keyChina.pem"                   # dein SSH private key
 SERVER_IP="212.227.74.41"                 # deine Server IP
 REMOTE_DIR="/var/www/kakobuynext"             # Zielverzeichnis auf dem Server
 LOCAL_PROJECT_DIR="./"                    # dein Projektordner lokal
-PM2_PROCESS_NAME="27"    # PM2 Prozessname (neu: lieber Name statt ID verwenden)
+PM2_PROCESS_NAME="23"    # PM2 Prozessname (neu: lieber Name statt ID verwenden)
 # =====================
 
 # Check if SSH key exists

@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 export async function generateMetadata(): Promise<Metadata> {
   const title = 'KakoBuy Spreadsheet | Find the Best Deals';
   const description = 'Discover thousands of Chinese products with verified pricing, boosted offers, and detailed listings. Updated daily on KakoBuy Spreadsheet.';
-  const imageUrl = 'https://kakobuy-spreadsheet.com/images/seo-cover.webp';
+  const imageUrl = 'https://orientdigfinds.com/images/seo-cover.webp';
 
   return {
     title,

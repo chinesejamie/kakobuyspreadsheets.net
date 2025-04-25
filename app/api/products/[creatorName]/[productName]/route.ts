@@ -20,14 +20,13 @@ export async function GET(
     const productName = decodeURIComponent(rawProduct);
 
     const query = {
-      creatorName,
+      creatorName: { $regex: new RegExp(`^${creatorName}$`, 'i') },
       $or: [
-        { slug: productName },
-        { id:   productName },
-        { name: productName },
+        { slug: { $regex: new RegExp(`^${productName}$`, 'i') } },
+        { id: { $regex: new RegExp(`^${productName}$`, 'i') } },
+        { name: { $regex: new RegExp(`^${productName}$`, 'i') } },
       ],
     };
-
     // ─── Hier casten wir auf ein einzelnes Model<IProduct> ─────────────────────
     const ProductModel = Product as mongoose.Model<IProduct>;
 

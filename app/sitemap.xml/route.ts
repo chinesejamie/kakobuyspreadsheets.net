@@ -36,9 +36,7 @@ export async function GET() {
   // Dynamic Product Pages
   products.forEach((product: any) => {
     const creatorName = encodeURIComponent(product.creatorName);
-    const productSlug = encodeURIComponent(
-      product.name?.toLowerCase().replace(/\s+/g, '-') || 'product'
-    );
+    const productSlug = encodeURIComponent(product.name);
     const lastmod = product.updatedAt ? new Date(product.updatedAt).toISOString() : new Date().toISOString();
     
     xml += `  <url>\n`;
@@ -57,3 +55,4 @@ export async function GET() {
     },
   });
 }
+

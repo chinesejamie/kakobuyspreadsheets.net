@@ -1,6 +1,7 @@
 // app/page.tsx (Server Component)
 import Link from 'next/link';
 import { GiveawayForm } from '@/components/GiveawayForm';
+import TrackSignUpButton from '@/components/TrackSignUpButton';
 
 import type { Metadata } from 'next';
 
@@ -126,14 +127,7 @@ export default function Home() {
             Discover curated premium finds, exclusive <span className="text-primary-500 font-medium">KakoBuy coupons</span>, and over 7,500+ verified <span className="text-primary-500 font-medium">KakoBuy</span> products.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={CONFIG.INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-12 py-6 rounded-full text-xl font-bold transition-all transform hover:scale-105 shadow-xl shadow-primary-200 hover:shadow-primary-300 flex items-center justify-center gap-2"
-            >
-              🚀 Sign Up for KakoBuy & Get Exclusive Coupons!
-            </a>
+            <TrackSignUpButton />
             <Link
               href="/kakobuy-spreadsheet"
               className="border-2 border-primary-500 text-primary-600 hover:bg-primary-50 px-10 py-5 rounded-full text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2"
