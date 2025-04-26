@@ -41,28 +41,6 @@ export const metadata: Metadata = {
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 };
 
-// Schema.org structured data for rich snippets
-export const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": "KakoBuy Spreadsheet 2025",
-  "description": "The most comprehensive KakoBuy spreadsheet with 10,000+ verified products, HD QC photos, and exclusive coupons.",
-  "brand": {
-    "@type": "Brand",
-    "name": "KakoBuy Spreadsheet"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "2583"
-  }
-};
 
 // Key categories users search for
 const categories = [
@@ -120,6 +98,28 @@ const faqs = [
 ];
 
 export default function Home() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "KakoBuy Spreadsheet 2025",
+    "description": "The most comprehensive KakoBuy spreadsheet with 10,000+ verified products, HD QC photos, and exclusive coupons.",
+    "brand": {
+      "@type": "Brand",
+      "name": "KakoBuy Spreadsheet"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "2583"
+    }
+  };
+
   return (
     <div className="kakobuy-spreadsheet-container">
       {/* Hero Section - Optimized for "kakobuy spreadsheet" */}
