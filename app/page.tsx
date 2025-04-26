@@ -1,52 +1,40 @@
-// app/page.tsx (Server Component)
 import Link from 'next/link';
 import { GiveawayForm } from '@/components/GiveawayForm';
 import TrackSignUpButton from '@/components/TrackSignUpButton';
-
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'KakoBuy Spreadsheet | 7500+ Verified Finds, Coupons & Weekly Deals',
-  description: 'Access the largest KakoBuy Spreadsheet online. Discover 7,500+ verified products, exclusive KakoBuy coupons, weekly finds, and premium shopping insights. Your trusted source for Chinese shopping with KakoBuy!',
-  metadataBase: new URL('https://kakobuy-spreadsheet.com'),
+  title: 'KakoBuy Spreadsheet: 7500+ Verified Finds with QC Photos & Exclusive Coupons',
+  description: 'Access the ultimate KakoBuy spreadsheet with 7,500+ verified products, real QC photos, daily updates, and automatic coupons. Your complete guide to smart Chinese shopping with KakoBuy.',
+  metadataBase: new URL('https://kakobuyspreadsheets.net'),
   keywords: [
     'kakobuy spreadsheet',
-    'kakobuy price list',
     'kakobuy finds',
-    'kakobuy coupons',
-    'kakobuy shopping',
-    'kakobuy products',
     'kakobuy qc photos',
-    'chinese shopping spreadsheet',
-    'kakobuy verified items',
-    'kakobuy spreadsheet exclusive',
+    'kakobuy shopping guide',
+    'kakobuy verified products',
+    'kakobuy coupons 2024',
+    'how to use kakobuy',
+    'kakobuy spreadsheet tutorial'
   ],
   openGraph: {
-    title: 'KakoBuy Spreadsheet | 7500+ Verified Finds, Coupons & Weekly Deals',
-    description: 'Explore thousands of KakoBuy products with verified quality checks. Updated daily. Best deals and exclusive discounts only at KakoBuy Spreadsheet!',
-    url: '/',
-    siteName: 'KakoBuy Spreadsheet',
-    images: [
-      {
-        url: 'https://kakobuy-spreadsheet.com/images/seo-cover.webp', // Dein SEO Bild
-        width: 1200,
-        height: 630,
-        alt: 'KakoBuy Spreadsheet Cover',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
+    title: 'Official KakoBuy Spreadsheet | 7500+ Verified Products',
+    description: 'Daily updated KakoBuy spreadsheet with exclusive coupons, QC photos, and expert shopping tips. Your #1 resource for Chinese fashion and accessories.',
+    images: [{
+      url: 'https://kakobuyspreadsheets.net/images/seo-cover.webp', // Dein SEO Bild
+      width: 1200,
+      height: 630,
+      alt: 'KakoBuy Spreadsheet Interface'
+    }]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'KakoBuy Spreadsheet | Verified Products & Exclusive Coupons',
-    description: 'Access KakoBuy\'s top finds, exclusive coupons, and 7500+ verified products. Shop smart with KakoBuy Spreadsheet!',
-    images: ['https://kakobuy-spreadsheet.com/images/seo-cover.webp'],
+    title: 'KakoBuy Spreadsheet: Verified Finds & Coupons',
+    description: '7,500+ KakoBuy products with quality checks and exclusive discounts. Updated daily with new arrivals!'
   },
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' }
 };
+
 
 
 const CONFIG = {
@@ -118,22 +106,74 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20 px-4">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="bg-gradient-to-b from-blue-50 to-white py-12 px-4 md:py-20">
+        <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            #1 <span className="text-primary-500">KakoBuy</span> Spreadsheet <br /> Exclusive Finds & Coupons
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+              KakoBuy Spreadsheet
+            </span><br />
+            Your Gateway to 7,500+ Verified Finds
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-xl mx-auto">
-            Discover curated premium finds, exclusive <span className="text-primary-500 font-medium">KakoBuy coupons</span>, and over 7,500+ verified <span className="text-primary-500 font-medium">KakoBuy</span> products.
+          <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Updated daily with new arrivals • 360° QC Photos • Exclusive Coupons • Seller Ratings
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-stretch">
             <TrackSignUpButton />
             <Link
               href="/kakobuy-spreadsheet"
-              className="border-2 border-primary-500 text-primary-600 hover:bg-primary-50 px-10 py-5 rounded-full text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+              className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-4 md:px-8 md:py-4 rounded-xl text-lg font-semibold transition-all flex items-center justify-center gap-2"
             >
-              🔍 Explore the KakoBuy Spreadsheet
+              🔍 Explore Spreadsheet
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Value Propositions */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+          <div className="p-6 bg-gray-50 rounded-xl">
+            <div className="text-blue-600 text-3xl mb-4">📸</div>
+            <h2 className="text-2xl font-bold mb-3">Real QC Photos</h2>
+            <p className="text-gray-600">Every product includes multiple quality control images from actual shipments. Zoom in to inspect stitching, materials, and color accuracy.</p>
+          </div>
+          <div className="p-6 bg-gray-50 rounded-xl">
+            <div className="text-blue-600 text-3xl mb-4">🔄</div>
+            <h2 className="text-2xl font-bold mb-3">Daily Updates</h2>
+            <p className="text-gray-600">Our team adds 50-100 new verified finds daily, removing out-of-stock items in real-time.</p>
+          </div>
+          <div className="p-6 bg-gray-50 rounded-xl">
+            <div className="text-blue-600 text-3xl mb-4">💸</div>
+            <h2 className="text-2xl font-bold mb-3">Auto-Applied Coupons</h2>
+            <p className="text-gray-600">Save 15-30% automatically at checkout with our verified coupon codes.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Comprehensive Shopping Guide */}
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Mastering KakoBu: Your Complete Guide</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold">Why Choose KakoBu?</h3>
+              <ul className="space-y-4 list-disc pl-6">
+                <li><strong>Premium Quality Assurance:</strong> Every item undergoes 3-stage quality checks</li>
+                <li><strong>Global Shipping:</strong> Fast DHL/EMS options with package tracking</li>
+                <li><strong>Price Transparency:</strong> All prices in USD with no hidden fees</li>
+                <li><strong>Mobile-Optimized:</strong> Shop seamlessly on any device</li>
+              </ul>
+            </div>
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold">Step-by-Step Buying Process</h3>
+              <ol className="space-y-4 list-decimal pl-6">
+                <li>Search products using our spreadsheet filters</li>
+                <li>Compare prices and seller ratings</li>
+                <li>Review detailed QC photos</li>
+                <li>Apply coupons at checkout</li>
+                <li>Track your shipment in real-time</li>
+              </ol>
+            </div>
           </div>
         </div>
       </section>
@@ -233,28 +273,52 @@ export default function Home() {
 
 
       {/* Categories Section */}
-      <section className="py-8 md:py-16 bg-gray-50 px-4">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Explore Our <span className="text-primary-500">Categories</span>
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 max-w-6xl mx-auto mt-8">
-            {categories.map((category) => (
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Top KakoBu Categories</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              {name: 'Sneakers', count: '1,850+', icon: '👟'},
+              {name: 'Jackets', count: '920+', icon: '🧥'},
+              {name: 'Watches', count: '650+', icon: '⌚'},
+              {name: 'Bags', count: '1,200+', icon: '👜'},
+            ].map((category, i) => (
               <Link
-                key={category}
-                href={`/${CONFIG.AGENT_NAME.toLowerCase()}-spreadsheet?category=${encodeURIComponent(category)}`}
-                className="relative block bg-white border border-gray-200 rounded-lg shadow-sm p-4 md:p-6 text-center transition duration-300 ease-in-out"
+                key={i}
+                href={`/categories/${category.name.toLowerCase()}`}
+                className="p-6 bg-gray-50 rounded-xl text-center hover:shadow-md transition"
               >
-                <h3 className="text-sm md:text-lg font-semibold text-gray-900">
-                  {category}
-                </h3>
-                {category === 'Shoes' && (
-                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold py-1 px-2 rounded-lg">
-                    Hot
-                  </span>
-                )}
+                <div className="text-4xl mb-4">{category.icon}</div>
+                <h3 className="font-semibold">{category.name}</h3>
+                <p className="text-sm text-gray-500">{category.count} Verified</p>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Why Our Spreadsheet Wins</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-xl">
+              <h3 className="text-xl font-semibold mb-4">Typical KakoBu Experience</h3>
+              <ul className="space-y-3 text-red-600">
+                <li>❌ No quality guarantees</li>
+                <li>❌ Manual coupon searching</li>
+                <li>❌ Limited product information</li>
+                <li>❌ No stock updates</li>
+              </ul>
+            </div>
+            <div className="bg-blue-50 p-6 rounded-xl">
+              <h3 className="text-xl font-semibold mb-4">With Our Spreadsheet</h3>
+              <ul className="space-y-3 text-green-600">
+                <li>✅ Verified QC photos</li>
+                <li>✅ Auto-applied coupons</li>
+                <li>✅ Detailed size charts</li>
+                <li>✅ Real-time stock alerts</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>

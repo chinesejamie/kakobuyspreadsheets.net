@@ -3,10 +3,10 @@ import { Metadata } from 'next';
 
 // Function to generate metadata for the main pages
 export function generateMainMetadata(): Metadata {
-  const canonicalUrl = `https://kakobuy-spreadsheet.com`;
+  const canonicalUrl = `https://kakobuyspreadsheets.net/how-to-buy`;
   
   return {
-    metadataBase: new URL('https://kakobuy-spreadsheet.com'),
+    metadataBase: new URL('https://kakobuyspreadsheets.net/how-to-buy'),
     title: 'The #1 Ultimate KakoBuy Spreadsheet 2024 - Weekly Updates & Exclusive Finds',
     description: 'Access our premium KakoBuy spreadsheet with 7,500+ curated finds, exclusive coupons, and weekly updates. The most comprehensive KakoBuy spreadsheet for quality shopping in 2024.',
     keywords: 'KakoBuy, KakoBuy Spreadsheet, Best KakoBuy Spreadsheet, KakoBuy Spreadsheet 2024, best KakoBuy spreadsheet, KakoBuy spreadsheet clothes, KakoBuy spreadsheet, find KakoBuy spreadsheet, spreadsheet KakoBuy, KakoBuy finds, KakoBuy weekly finds, KakoBuy guide, KakoBuy coupons, KakoBuy discount',
@@ -20,7 +20,7 @@ export function generateMainMetadata(): Metadata {
       type: 'website',
       images: [
         {
-          url: 'https://kakobuy-spreadsheet.com/assets/staticimages/KakoBuyLogoCorner.png',
+          url: 'https://kakobuyspreadsheets.net/how-to-buy/assets/staticimages/KakoBuyLogoCorner.png',
           width: 1200,
           height: 630,
           alt: 'KakoBuy Spreadsheet',
@@ -31,7 +31,7 @@ export function generateMainMetadata(): Metadata {
       card: 'summary_large_image',
       title: "The World's #1 KakoBuy Spreadsheet | 7,500+ Verified Products & Weekly Updates",
       description: 'Discover the ultimate KakoBuy spreadsheet with 7,500+ curated finds, exclusive coupons, and hourly updates. The most trusted KakoBuy resource since 2024.',
-      images: ['https://kakobuy-spreadsheet.com/assets/staticimages/KakoBuyLogoCorner.png'],
+      images: ['https://kakobuyspreadsheets.net/how-to-buy/assets/staticimages/KakoBuyLogoCorner.png'],
     },
     alternates: {
       canonical: canonicalUrl,

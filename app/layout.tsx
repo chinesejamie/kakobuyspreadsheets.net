@@ -5,7 +5,7 @@ import { generateMainMetadata } from './metadata';
 import Header from '@/components/Header';
 import TopBanner from '@/components/TopBanner';
 import PromoPopup from '@/components/PromoPopup';
-
+import { Analytics } from "@vercel/analytics/react"
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = generateMainMetadata();
@@ -61,6 +61,7 @@ export default function RootLayout({
         <TopBanner />
         <Header />
         {children}
+        <Analytics />
       </body>
     </html>
   );

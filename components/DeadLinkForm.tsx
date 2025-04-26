@@ -52,7 +52,7 @@ export default function DeadLinkForm() {
             value={productLinkSpreadsheet}
             onChange={(e) => setProductLinkSpreadsheet(e.target.value)}
             required
-            placeholder="https://kakobuy-spreadsheet.com/..."
+            placeholder="https://kakobuyspreadsheets.net/how-to-buy/..."
             className="w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>

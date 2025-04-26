@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: 'KakoBuy Spreadsheet Articles & Guides 2024',
     description:
       'Explore in-depth articles around the KakoBuy Spreadsheet, including coupon hacks, agent comparisons, trust scores, and shopping tips for Chinese marketplaces.',
-    url: 'https://kakobuy-spreadsheet.com/kakobuy-spreadsheet/articles',
+    url: 'https://kakobuyspreadsheets.net/how-to-buy/kakobuy-spreadsheet/articles',
     type: 'article',
   },
   alternates: {

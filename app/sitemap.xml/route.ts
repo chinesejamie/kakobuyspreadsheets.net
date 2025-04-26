@@ -7,7 +7,7 @@ import Product from '@/models/Product';
 export async function GET() {
   await connectToDatabase();
 
-  const baseUrl = 'https://kakobuy-spreadsheet.com';
+  const baseUrl = 'https://kakobuyspreadsheets.net/how-to-buy/how-to-buy';
 
   const products = await Product.find({}, { creatorName: 1, name: 1, updatedAt: 1 }).lean();
 

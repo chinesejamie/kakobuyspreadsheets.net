@@ -11,6 +11,7 @@ const agentName = process.env.NEXT_PUBLIC_AGENT_NAME || 'KakoBuy';
 
 const navigation = [
   { name: 'Home', href: '/' },
+  { name: `How to Buy`, href: `/how-to-buy` },
   { name: `${agentName} Spreadsheet`, href: `/${agentName.toLowerCase()}-spreadsheet` },
   { name: 'Articles', href: '/articles' },
   { name: 'Finds of the Week', href: '/features/finds-of-the-week' },
